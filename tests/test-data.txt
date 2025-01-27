@@ -1,0 +1,12 @@
+Hello, this an example page and use case,
+for defining payment details, 
+
+Our payment details are below:
+
+ADDRESS: XXXXXX
+IBAN: XXXXX
+SWIFT/BIC: XXXX
+
+This document is signed using our Decentralized Identifier file. 
+You can find our latest DID file at https://YOURDOMAIN.TLD/.well-known/did.json
+

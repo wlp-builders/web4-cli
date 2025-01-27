@@ -1,0 +1,12 @@
+{
+    "proof": {
+        "@context": "https:\/\/web4.builders\/WEB4Signature2025",
+        "signed": "eyJhbGciOiJ3bHAyNTYiLCJ0eXAiOiJKV1QifQ.eyJzaGEzLTUxMi1oYXNoIjoiM2VkOTE1M2ZmNmJkY2Q0ZTVmNDI2ZmM0YjQ0NjE3MTgyNThjZjk4ZjUxNmI0YWRjM2VjYWNiMmViNmE5ZGI1MWUzMTk4ZmFiZjcyY2M1NTA0N2MyM2I4YjE1MmYzZjMzNmFjNDFhNDgyYWY5ZTM3YmVmYzc5YzBmMDNiMzQ1MDYiLCJjcmVhdGVkIjoxNzM3OTExOTMwLCJ0eXBlIjoiV0VCNFNpZ25hdHVyZTIwMjUiLCJkaWQiOiJkaWQ6d2ViNDp3bHB2My0xOTYubG9jYWwjc2lnLXB1Ymxpc2gifQ.V0TAOUDXJAZORL2XPHHEbUMatExLV3CAOq7dSbe9PpkS3cZDDmVNsXyI_WrEVtKYntCqqljQTUgUqISayPp-CzgyNjk1MmMwMWMyMjJkMWE4ZGE2NDUyZjI4OGI5OThkMWUyOGQ0ZGNjNjcyZjFjMGRiMzk2MTE1MjgzYWM4YjczMWQ1N2RkYzRjYjM1YjFlZjllNzM4ZjQyNDllN2RkZGZmZGM0MWZlYWQ2NmQ0ZDJlNzY2ZTc2NzMzMWJiNDY3",
+        "payload": {
+            "created": 1737911930,
+            "type": "WEB4Signature2025",
+            "did": "did:web4:wlpv3-196.local#sig-publish",
+            "action": "3ed9153ff6bdcd4e5f426fc4b4461718258cf98f516b4adc3ecacb2eb6a9db51e3198fabf72cc55047c23b8b152f3f336ac41a482af9e37befc79c0f03b34506"
+        }
+    }
+}
