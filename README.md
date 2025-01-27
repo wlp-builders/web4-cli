@@ -5,6 +5,7 @@
 ## 1. Generate DID
 ```
 git clone https://github.com/wlp-builders/web4-cli
+cd web4-cli
 php web4-cli.php --generate
 ```
 
