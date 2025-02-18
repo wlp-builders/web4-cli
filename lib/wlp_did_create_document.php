@@ -31,9 +31,7 @@ function wlp_did_create_document($domain, $fileName) {
     'secrets'=>[
       'e2e_secret_base64'=>rtrim(base64_encode($box_keys1['secret']),'='),
       'sig_secret_base64'=>rtrim(base64_encode($sign_keys1['secret']),'='),
-      'sig_publish_secret_base64'=>rtrim(base64_encode($sign_keys_publishing['secret']),'='),
-      'wallet_a_secret_base64'=>rtrim(base64_encode($sign_keys2['secret']),'='),
-      'wallet_b_secret_base64'=>rtrim(base64_encode($sign_keys3['secret']),'='),
+      'sig_publish_secret_base64'=>rtrim(base64_encode($sign_keys_publishing['secret']),'=')
     ]];
 }
   
@@ -48,8 +46,6 @@ output keys description:
     $controllerId = "https://" . rtrim($domain, "/");
     $did = 'did:web4:'.$domain;
 
-    $donate_encodings = convertBinaryPublicKeyToBases($publicKeyForDonations);
-    $donateB_encodings = convertBinaryPublicKeyToBases($publicKeyForDonationsB);
     // Construct the DID Document
     $didDocument = [
         "@context" => "https://web4.builders/didproto",
@@ -63,7 +59,7 @@ output keys description:
                 "publicKeyBase64" => rtrim(base64_encode($publicKeyForSigning),'='),
             ],
             [
-              "id" => $did."#sig-publishing",
+              "id" => $did."#sig-publish",
               "type" => "Ed25519VerificationKey2018",
               "publicKeyBase64" => rtrim(base64_encode($publicKeyForPublishing),'='),
             ],
@@ -73,45 +69,21 @@ output keys description:
                 "publicKeyBase64" => rtrim(base64_encode($publicKeyForEncryption),'='),
                 "encryption_algorithm" => "crypto_box",
             ],
-            [
-                "id" => $did."#wallet-a",
-                "type" => "Ed25519VerificationKey2018",
-                "publicKeyBase64" => rtrim(base64_encode($publicKeyForDonations),'='),
-                "publicKeyBase58" => $donate_encodings['base58'],
-                "publicKeyBase32" => $donate_encodings['base32'],
-              //$donate_encodings
-            ],
-            [
-                "id" => $did."#wallet-b",
-                "type" => "Secp256k1VerificationKey2018",
-                "publicKeyBase64" => rtrim(base64_encode($publicKeyForDonationsB),'='),
-                "publicKeyBase58" => $donateB_encodings['base58'],
-                "publicKeyBase32" => $donateB_encodings['base32'],
-              //$donate_encodings
-            ],
       //$publicKeyForDonationsB
         ]
     ];
 
     // prepare proof by signing the did document without "proof" key
-    $input = json_encode($didDocument);
-    $sig_result_obj = WLP256Signature2024($input,$did."#sig",$secretKeyForSigning);
-    $created = $sig_result_obj['payload']['created'];
-    $signed = $sig_result_obj['signed'];
+    $sig_result_obj = WLP256Signature2024($didDocument,$did."#sig",$secretKeyForSigning);
 
-    
     // Generate proof of work - wlp_anti_spam_pow
     $pow = generateProofOfWork(json_encode($didDocument),'444');
     $pow["type"] = "WEB4Hash2025";
-    
-    // add proof
-    $didDocument['proof'] = [
-      "type" => "WEB4Signature2025",
-      "created"=> $created,
-      "verificationMethod"=>$did."#sig",
-      "signatureValue"=>($signed),
-      "pow"=>$pow
-    ];
+    $pow['@context'] = "https://web4.builders/WEB4Hash2025";
+
+    // add proof signature + pow proof
+    $didDocument['proof'] = $sig_result_obj;
+    $didDocument['pow'] = $pow;
 
     
     
@@ -125,10 +97,11 @@ output keys description:
     //var_dump(['didDocumentJson',$didDocumentJson]);
     //var_dump(['fileName',$fileName]);
     // Save the JSON encoded DID Document to the specified file
-    mkdir(dirname($fileName), 0777, true);
     if (file_put_contents($fileName, $didDocumentJson) === false) {
         throw new Exception("Error writing DID Document to file: $fileName");
     }
+
+    chmod($fileName, 0770);
 
     return ($didDocument);
 }

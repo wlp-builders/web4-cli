@@ -16,7 +16,7 @@ function verifyProofOfWork($input,$nonce,$startsWith='WLP') {
   return startsWithCheck($base32Encoded,$startsWith);     
 }
 
-function generateProofOfWork($input,$startsWith='WLP') {
+function generateProofOfWork($input,$startsWith='444') {
     // Start with a nonce (random value)
     $nonce = 0;
 

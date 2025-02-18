@@ -1,0 +1,2 @@
+<?php
+define('sig_publish_secret_base64', 'bRkqUiqGVN4H8zS5Bpb528fkxT8MUqZD02wV4USYl2SrzD2bRdiyVZYjz8kzQWBLa9K1E3N0r8gsmTMmk7gSIw');

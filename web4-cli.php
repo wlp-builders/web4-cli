@@ -1,5 +1,6 @@
 <?php
-define('TEST_MODE',1);
+define('WEB4_CLI_NO_POW_TEST',1);
+//define('WEB4_CLI_DUMP_POSTDATA_TEST',1);
 
 // only load DID lib if not already loaded
 if(!function_exists('WLP256Signature2024')) {
@@ -12,7 +13,9 @@ if(!function_exists('WLP256Signature2024')) {
 // other essentials
 require_once __DIR__.'/lib/php-web4_multi_upload_repo.php';
 require_once __DIR__.'/lib/php-web4_repo_download_zip_operation.php';
-require_once __DIR__.'/lib/php-web4-search-operation.php';
+require_once __DIR__.'/lib/php-web4-post.php';
+require_once __DIR__.'/lib/php-web4-get-nonce.php';
+require_once __DIR__.'/lib/php-web4-repo-remove.php';
 
 
 function loadEnvFromCurrentDir() {
@@ -41,20 +44,16 @@ function loadEnvFromCurrentDir() {
 
 function printUsage() {
     echo "Usage:\n";
-    echo "  --generate	- Generates your DID.json and WEB4 keys via interactive mode. \n";
-    echo "Usage Full:\n";
-    echo "  --mode=generate_did --domain=<domain.tld> --outputFolder=<folder> \n";
-    #echo "  --mode=sign_file --file=<file_path> --secretKeyFile=<secret_key_file> --didWithHashtag=<did_with_hashtag>\n";
-    #echo "  --mode=sign_and_publish --repositoryUrlsFile=<repos.txt> --file=<file_path> --secretKeyFile=<secret_key_file> --didWithHashtag=<did_with_hashtag>\n";
-    #echo "  --mode=verify_sigfile --publicKeyBase64ForSigning=<public_key_base64> --file=<file_path.sig>\n";
+    echo "  --mode=sign_file --file=<file_path> --secretKeyFile=<secret_key_file> --didWithHashtag=<did_with_hashtag>\n";
+    echo "  --mode=sign_and_publish --repositoryUrlsFile=<repos.txt> --file=<file_path> --secretKeyFile=<secret_key_file> --didWithHashtag=<did_with_hashtag>\n";
+    echo "  --mode=verify_sigfile --publicKeyBase64ForSigning=<public_key_base64> --file=<file_path.sig>\n";
     echo "\n";
     echo "Modes:\n";
-    echo "  generate_did     - Generate DID.json file and WEB4 keys.\n";
-    #echo "  repo_search      - Search for files on repository.\n";
-    #echo "  repo_download    - Download signed file from repository.\n";
-    ##echo "  sign_file        - Sign a file using a given secret key and DID.\n";
-    #echo "  sign_and_publish - Sign a file and upload both file + .sig file to a web4 compliant repo server.\n";
-    #echo "  verify_file      - Verify a sig.json file with a public key and DID.\n";
+    echo "  repo_search      - Search for files on repository.\n";
+    echo "  repo_download    - Download signed file from repository.\n";
+    echo "  sign_file        - Sign a file using a given secret key and DID.\n";
+    echo "  sign_and_publish - Sign a file and upload both file + .sig file to a web4 compliant repo server.\n";
+    echo "  verify_file      - Verify a sig.json file with a public key and DID.\n";
     echo "\n";
 }
 
@@ -91,18 +90,17 @@ function signTextMode($filePath, $secretKeyFile, $didWithHashtag) {
     $sigData = WLP256Signature2024($hashContent, $didWithHashtag, $secretKeyForSigning);
 
     // Generate proof of work - wlp_anti_spam_pow
-    if(!TEST_MODE) {
+    if(defined('WEB4_CLI_NO_POW_TEST')) {
 	    $pow = generateProofOfWork(json_encode($sigData),'444');
 	    $pow["type"] = "WEB4Hash2025";
 	    $sigData['pow'] = $pow;
     }
 
-    return '<div class="the_content">'.$fileContent.'</div><h5>Signature:</h5><pre>'.(json_encode([
-	    'proof' => $sigData,
-    ], JSON_PRETTY_PRINT)).'</pre>';
+    return '<div class="the_content">'.$fileContent.'</div><h5>Signature:</h5><pre>'.(json_encode($sigData, JSON_PRETTY_PRINT)).'</pre>';
 }
 
 function generateDidMode($options) {
+
 	$required_params = ['domain','outputFolder'];
 	foreach($required_params as $param) {
 		if(!isset($options[$param])) {
@@ -113,8 +111,18 @@ function generateDidMode($options) {
 
 	// wlp create structure output
 	$outputFolder = $options['outputFolder'];
+
+	if(!file_exists($outputFolder)) {
+		mkdir($outputFolder, 0777, true);
+	}
+
+
 	$domain = $options['domain'];
-	$fileName = $options['outputFolder'].'/did.json';
+	$wellKnownFolder = $options['outputFolder'].'/.well-known';
+	if(!file_exists($wellKnownFolder)) {
+		mkdir($wellKnownFolder,0777,true);
+	}
+	$fileName = $options['outputFolder'].'/.well-known/did.json';
 	$docReturn = wlp_did_create_document($domain, $fileName);
 	createDidKeyFiles($docReturn, $outputFolder . '/web4-keys');
 	$output = $docReturn;
@@ -123,27 +131,53 @@ function generateDidMode($options) {
 	
 }
 
-function signFileMode($filePath, $secretKeyFile, $didWithHashtag) {
+function signFileMode($options) { 
+
+	$required_params = ['receiverDomain','repositoryUrl'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+	
+    $nonceInfo = getNonceMode($options);
+	extract($options);
+
+    $end_timestamp = $nonceInfo['end_timestamp'];
+    
     $fileHash = hashFile($filePath);
     $secretKeyForSigning = loadSecretFromFile($secretKeyFile);
-    $skipSha3Hash = true;
-    $sigData = WLP256Signature2024($fileHash, $didWithHashtag, $secretKeyForSigning, $skipSha3Hash);
+    $input = ["nonceInfo"=>$nonceInfo,"fileHash"=>$fileHash];
+    $sigData = WLP256Signature2024($input, $didWithHashtag, $secretKeyForSigning,$end_timestamp,$receiverDomain);
 
     // Generate proof of work - wlp_anti_spam_pow
-    if(!TEST_MODE) {
+    if(!defined("WEB4_CLI_NO_POW_TEST")) {
     $pow = generateProofOfWork(json_encode($sigData),'444');
     $pow["type"] = "WEB4Hash2025";
     $sigData['pow'] = $pow;
     }
 
-    return(json_encode(['proof' => $sigData], JSON_PRETTY_PRINT));
+    // add input for next POST request and debugging
+    $sigData["input"]=$input;
+    return $sigData;
 }
 
-function verifySigFileMode($filePath, $publicKeyBase64ForSigning, $didWithHashtag) {
+function verifySigFileMode($options) {
+	$required_params = ['didWithHashtag'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+
+    extract($options);
     $sigData = json_decode(file_get_contents($filePath), true);
     $publicKeyForSigning = base64_decode($publicKeyBase64ForSigning);
 
-    if ($sigData['proof']['payload']['did'] != $didWithHashtag) {
+    var_dump($sigData);
+    if ($sigData['payload']['senderDid'] != $didWithHashtag) {
         return "Error: Mismatch in domain/did key.\n";
         exit(1);
     }
@@ -156,28 +190,132 @@ function verifySigFileMode($filePath, $publicKeyBase64ForSigning, $didWithHashta
     }
 }
 
-function searchMode($options){
+function repoRemoveMode($options){
+	$required_params = ['name','didWithHashtag','secretKeyFile'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+	extract($options);
+    $secretKeyForSigning = loadSecretFromFile($secretKeyFile);
+
     $urls = loadUrls($options);
     $allResults = [];
     foreach($urls as $url) {
-	$keyword = $options['query'];
-	// Example usage
 	$repo = trim($url);
 	$headers = [
-	    'DID: did:web4:wlpv3-196.local#sig',
+	    'DID: '.$didWithHashtag,
 	    'Content-Type: application/json'
 	];
 
-	// Execute the function
-	$results = web4_repo_search($repo, $keyword, $headers);
-	foreach($results as $result) {
-		$result['source'] = $url;
-		$allResults[] = $result;
+
+	$nonceOptions = ['repositoryUrl'=>$url,'didWithHashtag'=>$didWithHashtag];
+	$nonceInfo = getNonceMode($nonceOptions);
+	$postData = ['fn'=>['repo__remove'=>$name],'nonceInfo'=>$nonceInfo];
+    // sign post data v1
+    $postData['proof'] = WLP256Signature2024($postData,$didWithHashtag,$secretKeyForSigning,$nonceInfo['end_timestamp'],$receiverDomain);
+
+
+	if(defined('WEB4_CLI_DUMP_POSTDATA_TEST')) {
+	var_dump($postData);
 	}
+
+	// Execute the function
+	$results = web4_post($repo, $postData, $headers);
+	$allResults[] = $results;
     }
 
 // Output the result
 return $allResults;
+
+
+}
+function getNonceMode($options){
+	$required_params = ['didWithHashtag','repositoryUrl'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+	extract($options);
+
+    $url = $repositoryUrl;
+	// Example usage
+	$repo = trim($url);
+	$headers = [
+	    'DID: '.$didWithHashtag,
+	    'Content-Type: application/json'
+	];
+
+	$postData = ['fn'=>['web4__get_nonce'=>[$didWithHashtag]]];
+
+    	$errors = [];
+	// Execute the function
+	var_dump('nonce post data and repo: '.json_encode(['url'=>$url,'postData'=>$postData]));
+	$result = web4_post($repo,$postData,$headers);
+	var_dump('nonce result: '.json_encode($result));
+	return $result;
+
+
+}
+
+function searchMode($options){
+	$required_params = ['didWithHashtag','query','secretKeyFile'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+	extract($options);
+
+    $urls = loadUrls($options);
+    $allResults = [];
+    foreach($urls as $url) {
+		$options['receiverDomain'] = str_replace('https://','',str_replace('http://','',$url));
+		$receiverDomain = $options['receiverDomain'];
+	$nonceOptions = ['repositoryUrl'=>$url,'didWithHashtag'=>$didWithHashtag];
+	$nonceInfo = getNonceMode($nonceOptions);
+	//var_dump(['nonceInfo',$nonceInfo]);
+
+	$keyword = $options['query'];
+	// Example usage
+	$repo = trim($url);
+	$headers = [
+	    'DID: '.$didWithHashtag,
+	    'Content-Type: application/json'
+	];
+    $secretKeyForSigning = loadSecretFromFile($secretKeyFile);
+    $postData = ['fn'=>['repo__search'=>[$keyword]],'nonceInfo'=>$nonceInfo];
+    
+    // sign post data v1
+    $postData['proof'] = WLP256Signature2024($postData,$didWithHashtag,$secretKeyForSigning,$nonceInfo['end_timestamp'],$receiverDomain);
+
+	if(defined('WEB4_CLI_DUMP_POSTDATA_TEST')) {
+		var_dump($postData);
+	}
+
+    $errors = [];
+	// Execute the function
+	$results = web4_post($repo, $postData, $headers);
+	if($results) {
+        if(isset($results['error'])) {
+            $errors[] = ["url"=>$url, "error"=>$results['error']];
+        } else {
+
+           foreach($results as $result) {
+                $result['source'] = $url;
+                $allResults[] = $result;
+            }
+        }
+	}
+    }
+
+// Output the result
+return ["results"=>$allResults,"errors"=>$errors];
 
 
 }
@@ -197,71 +335,107 @@ function loadUrls($options) {
 }
 
 function downloadFileMode($options){
+	$required_params = ['downloadId','secretKeyFile','didWithHashtag','outputFolder'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+
     // upload both .zip and .sig to URLS defined in repositoryUrlsFile
 	//$download_id, $version, $secretKeyFile, $didWithHashtag,$repositoryUrlsFile) {
-    $download_id = $options['downloadId'];
-    $secretKeyFile = $options['secretKeyFile'];
-    $domain = $options['domain'];
-    $didWithHashtag = 'did:web4:'.$domain.'#sig';
+    extract($options);
+    $secretKeyForSigning = loadSecretFromFile($secretKeyFile);
 
     $urls = loadUrls($options);
     foreach($urls as $url) {
-     // $url = 'http://wlpv3-196.local/';
+	$options['receiverDomain'] = str_replace('https://','',str_replace('http://','',$url));
+	$receiverDomain = $options['receiverDomain'];
+	// Execute the function and print the response
+	try {
+	$repo = trim($url);
+	$nonceOptions = ['repositoryUrl'=>$url,'didWithHashtag'=>$didWithHashtag];
+	$nonceInfo = getNonceMode($nonceOptions);
+	$postData = [
+		'fn'=>['repo__download' => [$downloadId]],
+		'nonceInfo'=>$nonceInfo,
+	];
+    // sign post data v1
+    $postData['proof'] = WLP256Signature2024($postData,$didWithHashtag,$secretKeyForSigning,$nonceInfo['end_timestamp'],$receiverDomain);
 
-// Execute the function and print the response
-try {
 
-$repo = trim($url);
-//$repo = 'http://wlpv3-196.local/';
-$data = [
-    'repo__download' => [$download_id]
-];
-$headers = [
-    'DID: did:web4:wlpv3-196.local#sig',
-    'Content-Type: application/json'
-];
-$type = 'plugins';
-$install_path = WEB4_INSTALL_PATH.'/'.$type;
+	if(defined('WEB4_CLI_DUMP_POSTDATA_TEST')) {
+		var_dump($postData);
+	}
 
-// Execute the function
-$response = web4_repo_download_zip_operation($repo, $data, $headers, $install_path, $type);
+	$headers = [
+	    'DID: '.$didWithHashtag,
+	    'Content-Type: application/json'
+	];
+	$type = 'plugins';
+	$install_path = $outputFolder.'/'.$type;
 
-    echo json_encode(['output_path'=>$response]);
-    break; // return if download completed
-} catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
+	// Execute the function
+	$response = web4_repo_download_zip_operation($repo, $postData, $headers, $install_path, $type);
+
+	    return ['output_path'=>$response];
+	    break; // return if download completed
+	} catch (Exception $e) {
+	    echo 'Error: ' . $e->getMessage();
+	}
 }
-}
 
 }
 
-function signFileAndPublishMode($filePath, $secretKeyFile, $didWithHashtag,$repositoryUrlsFile) {
-    
+function signFileAndPublishMode($options) {
+	$required_params = ['filePath','secretKeyFile','didWithHashtag','receiverDomain'];
+	foreach($required_params as $param) {
+		if(!isset($options[$param])) {
+			throw new Exception($param." parameter missing");
+		}
+		
+	}
+	extract($options);
+	if(isset($options['repositoryUrlsFile'])) {
+    		// upload both .zip and .sig to URLS defined in repositoryUrlsFile
+    		$urlsText = trim(file_get_contents($repositoryUrlsFile));
+    		$urls = explode(PHP_EOL,$urlsText);
 
-    $sigfile_content = signFileMode($filePath, $secretKeyFile, $didWithHashtag);
+	} elseif(isset($options['repositoryUrl'])){
+		$urls = [$options['repositoryUrl']];
+	} else {
+		throw new Exception('Need repositoryUrl or repositoryUrlsFile option');
+	}
     
-    // create .sig file
-    $sigfile_path = '/var/www/wlpv3-web4/tests/test.sig.json';
-    file_put_contents($sigfile_path,$sigfile_content);
+    $secretKeyForSigning = loadSecretFromFile($secretKeyFile);
     
-    // upload both .zip and .sig to URLS defined in repositoryUrlsFile
-    $urlsText = trim(file_get_contents($repositoryUrlsFile));
-    $urls = explode(PHP_EOL,$urlsText);
     foreach($urls as $url) {
-     // $url = 'http://wlpv3-196.local/';
-$headers = [
-    'DID: '.$didWithHashtag
+	    $options['repositoryUrl'] = $url;
+    $sigfile_content = signFileMode($options);
+    // create .sig file
+    $sigfile_path = str_replace('.zip','.sig.json',$filePath); 
+    file_put_contents($sigfile_path,json_encode($sigfile_content));
+	$headers = [
+	    'DID: '.$didWithHashtag
+	];
+$postData = [
+    'data'=> ['fn' => ['repo__upload' => []]]
 ];
-$postFields = [
-    'data' => json_encode(['repo__upload' => []]),
-    'zip_file' => new CURLFile($filePath),
-    'sig_file' => new CURLFile($sigfile_path),
-];
+    // sign post data v1
+    $postData['data']['proof'] = WLP256Signature2024($postData['data'],$didWithHashtag,$secretKeyForSigning,$sigfile_content['input']['nonceInfo']['end_timestamp'],$receiverDomain);
+
+	if(defined('WEB4_CLI_DUMP_POSTDATA_TEST')) {
+		var_dump($postData);
+	}
+
+    $postData['zip_file'] = new CURLFile($filePath);
+    $postData['sig_file'] = new CURLFile($sigfile_path);
 
 // Execute the function and print the response
 try {
-    $response = web4_multi_upload_repo($url, $headers, $postFields);
-    echo $response;
+    $response = web4_multi_upload_repo($url, $headers, $postData);
+    echo $response.PHP_EOL;
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
@@ -278,74 +452,83 @@ function runMain($options) {
     }
 
     switch ($options['mode']) {
+        case 'get_nonce':
+		try {
+		    $output = getNonceMode($options);
+		    echo json_encode($output);
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
+            break;
         case 'generate_did':
 		try {
-
-		$docReturn = generateDidMode($options);
-		$outputFolder = $options['outputFolder'];
-		echo $docReturn;
-
-	} catch(Exception $e) {
-		echo $e->getMessage().PHP_EOL;
-                printUsage();
-                exit(1);
-	 }
+			$docReturn = generateDidMode($options);
+			$outputFolder = $options['outputFolder'];
+			echo $docReturn;
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
+            break;
+        case 'repo_remove':
+		try {
+			$docReturn = repoRemoveMode($options);
+			echo json_encode($docReturn);
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
             break;
         case 'repo_search':
-            if (isset($options['query'])) {
+		try {
 		    $output = searchMode($options);
 		    echo json_encode($output);
-            } else {
-                echo "Error: Missing parameters for sign_and_publish.\n";
-                printUsage();
-                exit(1);
-            }
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
             break;
         case 'download_file':
-	    if(!isset($options['downloadId'])) {
-                echo "Error: Missing parameter downloadId.\n";
-                printUsage();
-                exit(1);
-	    }
-            if (isset($options['repositoryUrlsFile']) && isset($options['secretKeyFile']) && isset($options['didWithHashtag'])) {
+		try {
 		    $output = downloadFileMode($options);
-            } else {
-                echo "Error: Missing parameters for sign_and_publish.\n";
-                printUsage();
-                exit(1);
-            }
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
             break;
         case 'sign_and_publish':
-            if (isset($options['repositoryUrlsFile']) && isset($options['file']) && isset($options['secretKeyFile']) && isset($options['didWithHashtag'])) {
+		try {
 		    $output = signFileAndPublishMode($options);
-            } else {
-                echo "Error: Missing parameters for sign_and_publish.\n";
-                printUsage();
-                exit(1);
-            }
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+                	printUsage();
+                	exit(1);
+		}
             break;
         case 'sign_file':
-            if (isset($options['file']) && isset($options['secretKeyFile']) && isset($options['didWithHashtag'])) {
-		    echo signFileMode($options);
-            } else {
-                echo "Error: Missing parameters for signing.\n";
-		 if(!isset($options['file'])) echo 'Missing: --file'.PHP_EOL;	
-		 if(!isset($options['secretKeyFile'])) echo 'Missing: --secretKeyFile'.PHP_EOL;	
-		 if(!isset($options['didWithHashtag'])) echo 'Missing: --didWithHashtag'.PHP_EOL;	
-		
-                printUsage();
-                exit(1);
-            }
+		try {
+	    echo json_encode(signFileMode($options));
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
             break;
 
         case 'verify_sigfile':
-            if (isset($options['file']) && isset($options['didWithHashtag']) && isset($options['publicKeyBase64ForSigning'])) {
-		    echo verifySigFileMode($options);
-            } else {
-                echo "Error: Missing parameters for verification.\n";
-                printUsage();
-                exit(1);
-            }
+		try {
+	    echo verifySigFileMode($options);
+		} catch(Exception $e) {
+			echo $e->getMessage().PHP_EOL;
+			printUsage();
+			exit(1);
+		 }
             break;
 
         default:
@@ -355,12 +538,12 @@ function runMain($options) {
     }
 }
 
+if (php_sapi_name() === 'cli' 
+    && isset($argc) 
+    && strpos(realpath($argv[0]), realpath(dirname(__FILE__))) === 0) {
 
-if (php_sapi_name() == "cli") {
-	
-	
 
-// first check for interactive shorthands --generate	
+    // first check for interactive shorthands --generate	
 // Parse command-line arguments
 $options = getopt('', ['generate']);
 
@@ -387,19 +570,21 @@ if (isset($options['generate'])) {
     echo "  Output Folder: $outputFolder\n";
     $options['domain'] = $domain;
     $options['outputFolder'] = $outputFolder;
+
     echo generateDidMode($options);
-    echo PHP_EOL.PHP_EOL.'Great! Next step: upload '.$outputFolder.'/did.json to '.$domain. '(for example via sftp)';
+    echo PHP_EOL.PHP_EOL.'Great! Next step: upload '.$outputFolder.'/.well-known/did.json to '.$domain. '(for example via sftp)';
 
     die();
 }
+
+
 // try to load .env-web4 file
 try {
     $envVars = loadEnvFromCurrentDir();
 } catch (Exception $e) {
     echo 'Error: ' . $e->getMessage();
 }
-
-$options = getopt("", ["mode:", "file:", "secretKeyFile:", "didWithHashtag:", "publicKeyBase64ForSigning:","repositoryUrlsFile:","query:","downloadId:","version:",'domain:','outputFolder:']);
+$options = getopt("", ["mode:", "filePath:", "secretKeyFile:", "didWithHashtag:", "publicKeyBase64ForSigning:","repositoryUrlsFile:","query:","downloadId:","version:",'domain:','outputFolder:','receiverDomain:','name:','repositoryUrl:']);
 
 // Merge command line options with environment variables, giving precedence to command line options.
 $finalVars = array_merge($envVars, array_filter($options));

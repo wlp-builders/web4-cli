@@ -30,7 +30,7 @@ $docReturn = [
 ];
 
 // Directory to save the key files
-$directory = './web4-keys/';
+$directory = './wlp-keys/';
 
 // Call the function to create the PHP files
 createKeyFiles($docReturn, $directory);

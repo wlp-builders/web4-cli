@@ -8,6 +8,8 @@
  * @return string The response from the server.
  */
 function web4_multi_upload_repo($url, $headers, $postFields) {
+
+    $postFields['data'] = json_encode($postFields['data']);
     // Initialize cURL
     $ch = curl_init();
 

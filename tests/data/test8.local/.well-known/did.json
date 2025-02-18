@@ -1,0 +1,57 @@
+{
+    "@context": "https://web4.builders/didproto",
+    "id": "did:web4:test8.local",
+    "created": 1738319967,
+    "latestVersion": "https://test8.local/.well-known/did.json",
+    "verificationMethod": [
+        {
+            "id": "did:web4:test8.local#sig",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "W+cXkqQN5+Ngb6WDPjbek6FlK6DaBfPkY9DNy/GAoNc"
+        },
+        {
+            "id": "did:web4:test8.local#sig-publishing",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "cgGtajqPPpfYTvzPKNK1OOBwNmSSUifgi+/eQbC29oc"
+        },
+        {
+            "id": "did:web4:test8.local#e2e",
+            "type": "X25519KeyAgreementKey2019",
+            "publicKeyBase64": "zFAKh1DbDF6FPFquGsiX4yLqU4m2VDvZtGD6jzmb+Hk",
+            "encryption_algorithm": "crypto_box"
+        },
+        {
+            "id": "did:web4:test8.local#wallet-a",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "Ueoa8m1gbvhJwAf7A+z2J/ERUXX6eZMgwzjFtkBCVh4",
+            "publicKeyBase58": "6Wm4ujKayA1ij4JpajvjSU6EFJzSg4H2f7HWoZQ2HxBo",
+            "publicKeyBase32": "KHVBV4TNMBXPQSOAA75QH3HWE7YRCULV7J4ZGIGDHDC3MQCCKYPA"
+        },
+        {
+            "id": "did:web4:test8.local#wallet-b",
+            "type": "Secp256k1VerificationKey2018",
+            "publicKeyBase64": "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEQnKGAsbwp/OxI8R8LlCXUWQrGyJrTHPe/l+CiaL6T1UIWxM3McWqNXUfkNNaGjEgIwxYJtHv1ZuDZeXbyBKGQA",
+            "publicKeyBase58": "PZ8Tyr4Nx8MHsRAGMpZmZ6TWY63dXWSCwgnAFP5aSktFbp2fxPNDBZ8S61suJ156VgJS2ow5M3P8md18rpMSPMkkn5ajMe7Eruv8Dee4yVjZVxxsoayQJrgo",
+            "publicKeyBase32": "GBLDAEAGA4VIMSGOHUBACBQFFOAQIAAKANBAABCCOKDAFRXQU7Z3CI6EPQXFBF2RMQVRWITLJRZ557S7QKE2F6SPKUEFWEZXGHC2UNLVD6INGWQ2GEQCGDCYE3I67VM3QNS6LW6ICKDEA"
+        }
+    ],
+    "proof": {
+        "signature": {
+            "@context": "https://web4.builders/WEB4Signature2025",
+            "type": "WEB4Signature2025",
+            "signed": "eyJhbGciOiJXRjUxMiIsInR5cCI6IkpXVCJ9.eyJpbnB1dC1oYXNoLXNoYTMtNTEyIjoiZWZiMWZhN2Y2YWU3NGU5MGRlYmUxMGFhNDlmMWVjMDBiNWZhOTRhMDA5NmVhNTY3YmQzNGYzOTVkMzU2N2ZkYTNlMjAyMjBkODNiYWQ3YjUzZWJjYTJmNjQ1NDg5ZTEyYThmMjUwMTJmZGU0NGVkYzA5MjgxYjZhMGUzM2U4YmQiLCJjcmVhdGVkIjoxNzM4MzE5OTY3LCJ0eXBlIjoiV0VCNFNpZ25hdHVyZTIwMjUiLCJzZW5kZXJEaWQiOiJkaWQ6d2ViNDp0ZXN0OC5sb2NhbCNzaWcifQ.uLK0cX2P-SubKtmwa8NqbZf6E3SvowBxPajunVjRp_UK-4fuzQAiHqzl9JBcIwPSG-k3DBgyn4FoRKcrpXXZBWMyY2ExODc3YTZkODcwYTk4ZjQ3OGUzMWJjYWIwMjAxMzQzY2JkYTEyZmQxMzM0ZjVkZmViN2MwMDUzMzkzNTk3ZjQ1NjllODI0YWRmZWNjNjgzN2U1NGY1OTE5NDUzNjAwNTI0YjRmMWJjMjlmYmVkNjM2MDJmYjM4YzE2Mzg2",
+            "payload": {
+                "created": 1738319967,
+                "type": "WEB4Signature2025",
+                "senderDid": "did:web4:test8.local#sig",
+                "input-hash": "efb1fa7f6ae74e90debe10aa49f1ec00b5fa94a0096ea567bd34f395d3567fda3e20220d83bad7b53ebca2f645489e12a8f25012fde44edc09281b6a0e33e8bd"
+            }
+        },
+        "pow": {
+            "nonce": 44626,
+            "hash": "444CR44TPJFHOB7ZXA2LKHOJYAOWZ6T5OVEVCWSIC7WNK75TKCH3JQVPU6SOVJMKIKK7Q6HBMYNC32M2S5QM7PJQHUBQWVUP6C54FAY",
+            "@context": "https://web4.builders/WEB4Hash2025",
+            "type": "WEB4Hash2025"
+        }
+    }
+}

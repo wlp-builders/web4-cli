@@ -1,4 +1,5 @@
-OUTPUT=`php web4-cli.php --file='tests/test-data.txt' --secretKeyFile='tests/data/sig_secret_base64.php' --didWithHashtag='did:web4:wlp193.local#sig' --mode='sign_file'`
+OUTPUT=`php ../web4-cli.php --filePath='test-data.txt' --secretKeyFile='data/test4.local/web4-keys/sig_publish_secret_base64.php' --didWithHashtag='did:web4:test4.local#sig-publish' --mode='sign_file' --receiverDomain='web4-repo.every.yoga'`
+
 echo $OUTPUT
-echo $OUTPUT > tests/test.sig.json
+echo $OUTPUT > test.sig.json
 

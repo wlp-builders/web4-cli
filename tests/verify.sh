@@ -1,2 +1,2 @@
-php web4-cli.php --file=tests/test.sig.json  --publicKeyBase64ForSigning='UUK95lWyTeNcj24h8Sji0/5+/kPe6EjrRle2vHJdurI' --didWithHashtag='did:web4:wlp193.local#sig' --mode='verify_sigfile'
+php ../web4-cli.php --filePath=test.sig.json  --publicKeyBase64ForSigning='tCJObZnUggxOWmUpbmS+kkj6nL/DZJHm/T2r7MEceWk' --didWithHashtag='did:web4:test4.local#sig-publish' --mode='verify_sigfile'
 

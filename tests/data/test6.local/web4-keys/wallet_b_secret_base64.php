@@ -1,0 +1,2 @@
+<?php
+define('wallet_b_secret_base64', 'MIGEAgEAMBAGByqGSM49AgEGBSuBBAAKBG0wawIBAQQgbQcJhm0KX1pHHcffrJdZ32lZ/Vw+y25xnO4qNenF+3uhRANCAARtT2tDeTspdlH3mZqRwoa+4y5Kjpsat93UjuextpATiLkBNrmMpvEG3kf3+ysoHdGwQYE55DhjtfB8KEE2AxaZ');

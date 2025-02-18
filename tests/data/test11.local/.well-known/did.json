@@ -1,0 +1,56 @@
+{
+    "@context": "https://web4.builders/didproto",
+    "id": "did:web4:test11.local",
+    "created": 1738364509,
+    "latestVersion": "https://test11.local/.well-known/did.json",
+    "verificationMethod": [
+        {
+            "id": "did:web4:test11.local#sig",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "alywU5GDhCP1ywddGMGmISUWs6fC/1PmHJllH9mgaZw"
+        },
+        {
+            "id": "did:web4:test11.local#sig-publish",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "rdZGG4rl1VDNey6yaiJQrLkEpoZyDnPnMBZmFMU3isU"
+        },
+        {
+            "id": "did:web4:test11.local#e2e",
+            "type": "X25519KeyAgreementKey2019",
+            "publicKeyBase64": "EExqAgU1KjT7pjGE1gvtz3IXVKzRyFSBoQD1q1cTeUQ",
+            "encryption_algorithm": "crypto_box"
+        },
+        {
+            "id": "did:web4:test11.local#wallet-a",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "+fuCmzuAJNZU220ifzjo1Jf4YBaNeGZeG/S3OQKrdWA",
+            "publicKeyBase58": "HppxJz3vkKET6BnFHkRoRjAhWLA6YULjDJ2H83vtwhqZ",
+            "publicKeyBase32": "7H5YFGZ3QASNMVG3NURH6OHI2SL7QYAWRV4GMXQ36S3TSAVLOVQA"
+        },
+        {
+            "id": "did:web4:test11.local#wallet-b",
+            "type": "Secp256k1VerificationKey2018",
+            "publicKeyBase64": "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEjdsmu92/YFJLnixq6AD2wnd/qSJ6vBBPB16p+8DTjuOYEKuj5xKXSgWPrKhzRHgNFNo0kRVFqe7mAsMri9Ka8Q",
+            "publicKeyBase58": "PZ8Tyr4Nx8MHsRAGMpZmZ6TWY63dXWSCyCDw6dbiKPDapLk7vUVGDZC43wiezEbML4nUDZqunTLXeFnMmV4cXnyJReDh18b4A68ktgh6Ay67s5UyCP7FpyAG",
+            "publicKeyBase32": "GBLDAEAGA4VIMSGOHUBACBQFFOAQIAAKANBAABEN3MTLXXN7MBJEXHRMNLUAB5WCO572SIT2XQIE6B26VH54BU4O4OMBBK5D44JJOSQFR6WKQ42EPAGRJWRUSEKULKPO4YBMGK4L2KNPC"
+        }
+    ],
+    "proof": {
+        "@context": "https://web4.builders/WEB4Signature2025",
+        "type": "WEB4Signature2025",
+        "signature": {
+            "signed": "eyJhbGciOiJXRjUxMiIsInR5cCI6IkpXVCJ9.eyJpbnB1dC1oYXNoLXNoYTMtNTEyIjoiNTk4OTIxODIwOGQwMWVkNjViYTAxMGUzN2U5YTFjN2E0ZDkxMWRhZTFmMWQ4ODIzM2RhNTE5MjlkYzkyYTM4ZmExYzA1YzYwODA2ZTQyZGIwYTljZmNlOTNlYTc2Y2Y2ZGNkMzJjNTMxZTQ2NTZlNjYyY2YzMGQ3OTZlOGFjNjQiLCJjcmVhdGVkIjoxNzM4MzY0NTA5LCJzZW5kZXJEaWQiOiJkaWQ6d2ViNDp0ZXN0MTEubG9jYWwjc2lnIn0.xCf9iMQmlTgiLqklpvq4O4OX-P7WL_couojJtGZo45bpJiWwcgAtIZm18yau2AdQWwWGPte4Zqzz1CZu94tCCzE5Yjg0NjJkYmM1YjRjOGRhYzEzMzRlMTkwYTNlZjg0NGQ1YWM3YmMxZjc4MWUzYmI3MWZiMmM0ODczYmI4YTQ1ODUxMmYxNTI3YWI4N2NjNDE3ZWY5MTg2ZWNiM2UwMTEyNGNiMmVhMzJkNGZhMjZiYzQ1ZWZjMjIxMDFlNmZk",
+            "payload": {
+                "created": 1738364509,
+                "senderDid": "did:web4:test11.local#sig",
+                "input-hash": "5989218208d01ed65ba010e37e9a1c7a4d911dae1f1d88233da51929dc92a38fa1c05c60806e42db0a9cfce93ea76cf6dcd32c531e4656e662cf30d796e8ac64"
+            }
+        }
+    },
+    "pow": {
+        "nonce": 6666,
+        "hash": "444BAUNDUQDPXFWTZMFPJXY6TL6US27CPH5FNIGROQACVONSLBVCHTJ3B7EJ4TLOCEOQW6PEV4GKYSYTQWMQ2GZUFLWTM4VVBGOYCII",
+        "type": "WEB4Hash2025",
+        "@context": "https://web4.builders/WEB4Hash2025"
+    }
+}

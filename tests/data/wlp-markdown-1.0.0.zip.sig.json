@@ -1,0 +1,12 @@
+{
+    "@context": "https:\/\/web4.builders\/WEB4Signature2025",
+    "type": "WEB4Signature2025",
+    "signed": "eyJhbGciOiJXRjUxMiIsInR5cCI6IkpXVCJ9.eyJpbnB1dC1oYXNoLXNoYTMtNTEyIjoiOTdkYTkyZTRmMWFlODUwNTYzOTZhMjMwMjQ5NjczMzcxMGVjZmM4ZmM1NTgxZDY1ZjdmOWQxODYyMTA3YWI5YWVjZDBmMjJmZDdmYmI3ZWZkODU2MGJkZTc5ZmVjMTJmYjdiMGRiMTFmNjhkOTUzOGUyZTUzZTc3MTdhOGFlYmYiLCJjcmVhdGVkIjoxNzM4MzI0NTAzLCJ0eXBlIjoiV0VCNFNpZ25hdHVyZTIwMjUiLCJzZW5kZXJEaWQiOiJkaWQ6d2ViNDp0ZXN0MTEubG9jYWwjc2lnLXB1Ymxpc2giLCJyZWNlaXZlckRvbWFpbiI6IndscDIxNy5sb2NhbCJ9.eQivOmPpefI14-lSFXMGF_twcC7EZHF8g8xxntwAB3d-FXXDRQoqYKkvuOu2cs_93CRGe5kcfXqYAfWYcGHPBDVmNWZhMTcxYTk3YmM3ODU4MjA1MGFkNGM2NzlkYmM0YzkzOGUxODViZDdlYjdhZGFkMDMwYmVhNDMyZTdlZjk4YTY2MjBjMTJhZGU3N2JjNWE3ODVhYTg4Njk4MTEyYTA3Njk4N2UxYmMzNjNmZjU4ZmJjMDYzNzRlZmM3ZWY4",
+    "payload": {
+        "created": 1738324503,
+        "type": "WEB4Signature2025",
+        "senderDid": "did:web4:test11.local#sig-publish",
+        "receiverDomain": "wlp217.local",
+        "input-hash": "97da92e4f1ae85056396a2302496733710ecfc8fc5581d65f7f9d1862107ab9aecd0f22fd7fbb7efd8560bde79fec12fb7b0db11f68d9538e2e53e7717a8aebf"
+    }
+}

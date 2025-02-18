@@ -20,7 +20,7 @@ function wlp256_sign($payload, $privateKey, $expirationTime=300) {
   
     // Header
     $header = [
-        'alg' => 'wlp256',
+        'alg' => 'WF512',
         'typ' => 'JWT'
     ];
 

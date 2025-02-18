@@ -1,0 +1,49 @@
+{
+    "@context": "https://web4.builders/didproto",
+    "id": "did:web4:test4.local",
+    "created": 1738241200,
+    "latestVersion": "https://test4.local/.well-known/did.json",
+    "verificationMethod": [
+        {
+            "id": "did:web4:test4.local#sig",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "iLIDCF2cTJkYUsmDic8aoMOe2UccJAkj39YS3m1BfVg"
+        },
+        {
+            "id": "did:web4:test4.local#sig-publishing",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "tCJObZnUggxOWmUpbmS+kkj6nL/DZJHm/T2r7MEceWk"
+        },
+        {
+            "id": "did:web4:test4.local#e2e",
+            "type": "X25519KeyAgreementKey2019",
+            "publicKeyBase64": "BGwPheLIKciXQ5bRcpKQOKi5CxXwu2yXmCwwACR+uEg",
+            "encryption_algorithm": "crypto_box"
+        },
+        {
+            "id": "did:web4:test4.local#wallet-a",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "fmfp6CIYR/1QLgW+DxYsazMFenlTZZFlI9kOJjdhNDs",
+            "publicKeyBase58": "9WSGm4jXfk7yL1jSyNGgsAzTYr6EaPReVmE5pHCU9XCv",
+            "publicKeyBase32": "PZT6T2BCDBD72UBOAW7A6FRMNMZQK6TZKNSZCZJD3EHCMN3BGQ5Q"
+        },
+        {
+            "id": "did:web4:test4.local#wallet-b",
+            "type": "Secp256k1VerificationKey2018",
+            "publicKeyBase64": "MFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEpx3LFrzkdklO+4KLEW8WI5al1KZe1Zff/Fhy4vNaW/aI29VQRMGuGadRW33U6yXyFrpah8hDpQRIsmxzO0vxbQ",
+            "publicKeyBase58": "PZ8Tyr4Nx8MHsRAGMpZmZ6TWY63dXWSCyhWsRvggkbWURJszkPPtMNoU8QhGKLPs3PDt29DoMzHWNYba7A3Rbwjm3irXqRDNSDCPFf3phZYPq6shNFwdQmtQ",
+            "publicKeyBase32": "GBLDAEAGA4VIMSGOHUBACBQFFOAQIAAKANBAABFHDXFRNPHEOZEU564CRMIW6FRDS2S5JJS62WL577CYOLRPGWS362ENXVKQITA24GNHKFNX3VHLEXZBNOS2Q7EEHJIEJCZGY4Z3JPYW2"
+        }
+    ],
+    "proof": {
+        "type": "WEB4Signature2025",
+        "created": 1738241200,
+        "verificationMethod": "did:web4:test4.local#sig",
+        "signatureValue": "eyJhbGciOiJXRjUxMiIsInR5cCI6IkpXVCJ9.eyJpbnB1dC1oYXNoLXNoYTMtNTEyIjoiMDBhMTRmZTgyODdlYjk0Mzc0YjhiZWZlOGZmNDI3MmU2OGUzZmY2MmY4OTEwYTQwYjQ0OTU0NTI1OGUyYTQ2ZmM5OTgyMjZhMGQwNGFlMzliNjFhNzNmOWU5YjU3M2ZiNzg1NDllNDdiY2ZmOWI3N2M1NzM5MzM5NjU4YjUzZTkiLCJjcmVhdGVkIjoxNzM4MjQxMjAwLCJ0eXBlIjoiV0VCNFNpZ25hdHVyZTIwMjUiLCJzZW5kZXJEaWQiOiJkaWQ6d2ViNDp0ZXN0NC5sb2NhbCNzaWcifQ.Gz4RHrw6hTQ5m6xD_83j2B52W0g5sdCHQmnV2EMzqp2CMzEfLhI2SnofMfVu4g8_TaiTXpkuKOYuh1dD2A9-CzcyZWRlYzljMTYxMjk4ZjM2Yjg0MTRlYjA0ZDY0NTc1YmJiNWQ5NTk3ZWNjZTdjYjUzYjIzNzc0NmM2NzJlYWU5ZDRlN2Q1ZjM5YzUxOTFjY2JiYTZhZWU5MTY4NGQxNzExMjY3Yjg0ZGZlZDIyNzY0ZTQwMWY2MWFmMmQzMDlj",
+        "pow": {
+            "nonce": 32146,
+            "hash": "444AF4AY52ZX66XRAV5S6DHFBOULR7BJIDXCKLWDXULQZGJS6MAA2FEN36O5K77QSMYLMYU7T7WNPPWMKCQA2N6XCHLJ6DXL3ZJJ2FI",
+            "type": "WEB4Hash2025"
+        }
+    }
+}

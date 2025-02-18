@@ -1,0 +1,42 @@
+{
+    "@context": "https://web4.builders/didproto",
+    "id": "did:web4:firsttest.local",
+    "created": 1739106836,
+    "latestVersion": "https://firsttest.local/.well-known/did.json",
+    "verificationMethod": [
+        {
+            "id": "did:web4:firsttest.local#sig",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "348WSTpg9f57nzNFP85prK8Y3Gbn/xm3tNeoBagmbes"
+        },
+        {
+            "id": "did:web4:firsttest.local#sig-publish",
+            "type": "Ed25519VerificationKey2018",
+            "publicKeyBase64": "3inBT2AhQgLDJJjNrj8fK66jk0z6gzZOtvEvemrxnco"
+        },
+        {
+            "id": "did:web4:firsttest.local#e2e",
+            "type": "X25519KeyAgreementKey2019",
+            "publicKeyBase64": "QsECkNoUg2ICCQRJIWC1Kr9P9TJNzsC9QwBUvRwywgU",
+            "encryption_algorithm": "crypto_box"
+        }
+    ],
+    "proof": {
+        "@context": "https://web4.builders/WEB4Signature2025",
+        "type": "WEB4Signature2025",
+        "signature": {
+            "signed": "eyJhbGciOiJXRjUxMiIsInR5cCI6IkpXVCJ9.eyJpbnB1dC1oYXNoLXNoYTMtNTEyIjoiZmUwMWI4MzVmN2UwNjg5MjY4MjkxMmRkZTczNDkzYWFkY2Y0MmE0MDMzZmY5NGY1ZGY3ODlkMmI4ZTRlMzc2NDU1ZGVkYTUyOWEwMjNhMTcxMDQ3YTQ2MTUwMWI5OGU4NjJkYTI0OGU1ZTE0MTk3Y2ZmNWVkNGZkZjc2NWNiZDMiLCJjcmVhdGVkIjoxNzM5MTA2ODM2LCJzZW5kZXJEaWQiOiJkaWQ6d2ViNDpmaXJzdHRlc3QubG9jYWwjc2lnIn0.siu38HtAwtHgnTy_jsTnrTAHYzwUsz_fksFHFSAWH7jDTtKeDA0qFlXYHNkoHRcRJ5B9CZK1gSAawhCQaLiZBDczM2Q2ODUwMmEyNzA5NzFjYmNkM2M0Y2JkNDUzYzU4MWFiZTUwM2M4Y2UyNThjNmQzYjEzMDI5NzgwZjZjYWQ2MzYwYjEyOTNiN2RhOWM4N2JlYWZhYmU2ODllYWMzZjNhMWYwZjZiNmUxYzZlY2U5Y2FiNWNhYWUxN2YwOWFj",
+            "payload": {
+                "created": 1739106836,
+                "senderDid": "did:web4:firsttest.local#sig",
+                "input-hash": "fe01b835f7e06892682912dde73493aadcf42a4033ff94f5df789d2b8e4e376455deda529a023a171047a461501b98e862da248e5e14197cff5ed4fdf765cbd3"
+            }
+        }
+    },
+    "pow": {
+        "nonce": 33251,
+        "hash": "444CV3S6KWLNKBAN7GEEN56WSQW6RYWTNHQZ6HPIC73LFXN2O5AVJJXVESLCGGT5OBNOM5GB26GMWI7VTSNEV3ZSASL2RNYU3NDPFHI",
+        "type": "WEB4Hash2025",
+        "@context": "https://web4.builders/WEB4Hash2025"
+    }
+}

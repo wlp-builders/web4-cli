@@ -1,34 +1,36 @@
 <?php
 require_once 'wlp256.php';
+require_once 'php-json_hash.php';
 
 if(!function_exists('WLP256Signature2024')){
-	function WLP256Signature2024($input,$didWithHashtag,$secretKeyForSigning,$skipSha3Hash=false) {
-	  // You can use skipSha3Hash if you already hashed it, ex. for files
-		if($skipSha3Hash) {
-		$hash = $input;
-		} else {
-		$hash = hash('sha3-512',$input);
-		}
-
+	function WLP256Signature2024($input,$didWithHashtag,$secretKeyForSigning,$time_end=null,$receiverDomain=null) {
+	  $hash = json_hash($input,'sha3-512');		
 	  $exp = false; // no expiration
-	  $created = time();
+
+	  if($time_end) {
+		$created = $time_end; // to set same as nonce last time
+	  } else {
+		  $created = time();
+	  }
 	  $payload = [
-	    "sha3-512-hash"=>$hash,
+	    "input-hash-sha3-512"=>$hash,
 	    "created"=>$created,
-	    "type" => "WEB4Signature2025",
-	    "did"=>$didWithHashtag,
+	    "senderDid"=>$didWithHashtag
 	  ];
+	  if($receiverDomain){
+		$payload['receiverDomain'] = $receiverDomain;
+	  }
 	  $signed = wlp256_sign($payload, $secretKeyForSigning,$exp);
-	  $payload['action'] = $payload['sha3-512-hash'];
-	  unset($payload['sha3-512-hash']);
+	  $payload['input-hash'] = $payload['input-hash-sha3-512'];
+	  unset($payload['input-hash-sha3-512']);
 	  return [
 	    "@context"=>"https://web4.builders/WEB4Signature2025",
-	    "signed" => $signed,
-	    "payload" => $payload,
+	    "type"=>"WEB4Signature2025",
+	    "signature" => ["signed"=>$signed,"payload" => $payload],
 	  ];
 	}
 	function WLP256Signature2024_verify($newDoc,$publicKeyForSigning) {
-	    $proofSignature = $newDoc['proof']['signed'];
+	    $proofSignature = $newDoc['signed'];
 	    return false != wlp256_verify($proofSignature, $publicKeyForSigning);
 	}
 }
